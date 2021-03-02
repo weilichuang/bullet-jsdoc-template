@@ -171,8 +171,8 @@ function getClassInfo(data, cls) {
 var clsUrl = function (cls) {
     var name = cls.longname || cls;
 
-    if (name !== 'pc') {
-        name = 'pc.' + name;
+    if (name !== 'bt') {
+        name = 'bt.' + name;
     }
 
     // class name
@@ -286,7 +286,7 @@ var typeLink = function (type) {
     if (builtin) {
         url = builtin;
     } else if (name.startsWith("callbacks")) {
-        url = "pc.callbacks.html#" + name.substring("callbacks.".length);
+        url = "bt.callbacks.html#" + name.substring("callbacks.".length);
     } else {
         url = clsUrl(name);
     }
@@ -303,7 +303,6 @@ var setupTemplates = function (dir) {
     handlebars.registerPartial("event", fs.readFileSync(path.join(dir, "tmpl/event.tmpl"), { encoding: "utf-8" }));
     handlebars.registerPartial("typedef", fs.readFileSync(path.join(dir, "tmpl/typedef.tmpl"), { encoding: "utf-8" }));
     handlebars.registerPartial("example", fs.readFileSync(path.join(dir, "tmpl/example.tmpl"), { encoding: "utf-8" }));
-    handlebars.registerPartial("analytics", fs.readFileSync(path.join(dir, "tmpl/analytics.tmpl"), { encoding: "utf-8" }));
 
     handlebars.registerHelper("excerpt", function (text) {
         // return the first characters of the string up to and including the first period (.) not inside curly braces
@@ -323,13 +322,13 @@ var setupTemplates = function (dir) {
     handlebars.registerHelper("parse", function (text) {
         var result = helper.resolveLinks(text);
 
-        // add pc. prefix to API links
+        // add bt. prefix to API links
         var regex = /href="(\w+)\.html/g;
         var match;
         while ((match = regex.exec(result))) {
-            if (match[1] === 'pc') continue;
+            if (match[1] === 'bt') continue;
             result = result.substring(0, match.index) +
-                     `href="pc.${match[1]}.html` +
+                     `href="bt.${match[1]}.html` +
                      result.substring(match.index + 11 + match[1].length);
         }
 
@@ -437,10 +436,10 @@ exports.publish = function (data, opts) {
             if (registeredLinks[doclet.longname])
                 return;
 
-            // move global scope doclets into the 'pc' namespace
+            // move global scope doclets into the 'bt' namespace
             if (!doclet.memberof) {
                 doclet.scope = 'static';
-                doclet.memberof = 'pc';
+                doclet.memberof = 'bt';
             }
 
             var link = helper.createLink(doclet);
@@ -480,8 +479,8 @@ exports.publish = function (data, opts) {
             var page = tmpl(context);
 
             var name = cls.longname;
-            if (name !== 'pc') {
-                name = 'pc.' + name;
+            if (name !== 'bt') {
+                name = 'bt.' + name;
             }
 
             var outpath = path.join(outdir, name + ".html");
